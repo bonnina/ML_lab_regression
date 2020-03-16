@@ -15,6 +15,8 @@ namespace ML_lab_regression
             MLContext mlContext = new MLContext(seed: 0);
 
             var model = Train(mlContext, _trainDataPath);
+
+            Evaluate(mlContext, model);
         }
 
         public static ITransformer Train(MLContext mlContext, string dataPath)
@@ -31,6 +33,21 @@ namespace ML_lab_regression
             var model = pipeline.Fit(dataView);
 
             return model;
+        }
+
+        private static void Evaluate(MLContext mlContext, ITransformer model)
+        {
+            IDataView dataView = mlContext.Data.LoadFromTextFile<TaxiTrip>(_testDataPath, hasHeader: true, separatorChar: ',');
+
+            var predictions = model.Transform(dataView);
+            var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
+
+            Console.WriteLine();
+            Console.WriteLine($"*************************************************");
+            Console.WriteLine($"*       Model quality metrics evaluation         ");
+            Console.WriteLine($"*------------------------------------------------");
+            Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
+            Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
         }
     }
 }
