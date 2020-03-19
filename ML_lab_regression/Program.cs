@@ -49,5 +49,28 @@ namespace ML_lab_regression
             Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
         }
+
+        private static void TestSinglePrediction(MLContext mlContext, ITransformer model)
+        {
+            TestSinglePrediction(mlContext, model);
+
+            var predictionFunction = mlContext.Model.CreatePredictionEngine<TaxiTrip, TaxiTripFarePrediction>(model);
+
+            var taxiTripSample = new TaxiTrip()
+            {
+                VendorId = "VTS",
+                RateCode = "1",
+                PassengerCount = 1,
+                TripTime = 1140,
+                TripDistance = 3.75f,
+                PaymentType = "CRD",
+                FareAmount = 0 // To predict. Actual/Observed = 15.5
+            };
+            var prediction = predictionFunction.Predict(taxiTripSample);
+
+            Console.WriteLine($"**********************************************************************");
+            Console.WriteLine($"Predicted fare: {prediction.FareAmount:0.####}, actual fare: 15.5");
+            Console.WriteLine($"**********************************************************************");
+        }
     }
 }
