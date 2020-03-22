@@ -48,6 +48,8 @@ namespace ML_lab_regression
             Console.WriteLine($"*------------------------------------------------");
             Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
+
+            SaveModel(mlContext, dataView.Schema, model);
         }
 
         private static void TestSinglePrediction(MLContext mlContext, ITransformer model)
@@ -71,6 +73,11 @@ namespace ML_lab_regression
             Console.WriteLine($"**********************************************************************");
             Console.WriteLine($"Predicted fare: {prediction.FareAmount:0.####}, actual fare: 15.5");
             Console.WriteLine($"**********************************************************************");
+        }
+
+        private static void SaveModel(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
+        {
+            mlContext.Model.Save(model, trainingDataViewSchema, _modelPath);
         }
     }
 }
